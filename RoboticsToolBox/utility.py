@@ -12,6 +12,32 @@ from urdf_parser_py.urdf import URDF
 # # 解析URDF文件
 # robot = URDF.from_xml_file("/home/robot/Desktop/BestMan_Elephant/Asset/mycobot_pro_630.urdf")
 
+def radians_to_degrees(radians):
+    return radians * (180 / np.pi)
+
+def degrees_to_radians(degrees):
+    return degrees * (np.pi / 180)
+
+def euler_to_quaternion(euler): # (roll, pitch, yaw):
+    # 将角度转换为弧度
+    roll, pitch, yaw = euler
+   
+
+    cy = np.cos(yaw * 0.5)
+    sy = np.sin(yaw * 0.5)
+    cp = np.cos(pitch * 0.5)
+    sp = np.sin(pitch * 0.5)
+    cr = np.cos(roll * 0.5)
+    sr = np.sin(roll * 0.5)
+
+    # 计算四元组
+    w = cr * cp * cy + sr * sp * sy
+    x = sr * cp * cy - cr * sp * sy
+    y = cr * sp * cy + sr * cp * sy
+    z = cr * cp * sy - sr * sp * cy
+
+    return np.array([x, y, z, w])
+
 def pose_to_euler(pose):
     '''
     Convert robot pose from a list [x, y, z, qw, qx, qy, qz] to [x, y, z] and Euler angles.

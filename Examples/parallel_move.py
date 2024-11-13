@@ -15,8 +15,8 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(parent_dir, 'RoboticsToolBox'))
 from RoboticsToolBox.Bestman_Elephant import Bestman_Real_Elephant
 # 实例化Bestman_Real_Elephant对象
-bestman1 = Bestman_Real_Elephant("192.168.43.38", 5001)
-bestman2 = Bestman_Real_Elephant("192.168.43.243", 5001)
+bestman1 = Bestman_Real_Elephant("192.168.15.130", 5001)
+bestman2 = Bestman_Real_Elephant("192.168.15.26", 5001)
 T_Cam2Robot_arm1 =np.array(
 [[-9.99810248e-01,  5.95333441e-03, -1.85479259e-02,  2.41222153e+02],
  [ 4.60860048e-03,  9.97414322e-01,  7.17177231e-02, -2.68426413e+02],
@@ -80,16 +80,16 @@ executor = ProcessPoolExecutor(max_workers=2)
 def move_arm(arm:Bestman_Real_Elephant, x_base, y_base, z_base, operation):
     print(f"{arm}-operation:{operation}-moveing to coordinates:({x_base, y_base, z_base})")
     if operation == GRAB:
-        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=800)
-        arm.open_gripper(open_scale=50)
-        arm.set_arm_coords([x_base, y_base, 165, 175, 0, 120], speed=800)
+        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=1200)
+        arm.open_gripper(open_scale=100)
+        arm.set_arm_coords([x_base, y_base, 165, 175, 0, 120], speed=1200)
         arm.close_gripper()
-        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=800)
+        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=1200)
     else:
-        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=800)
-        arm.set_arm_coords([x_base, y_base, 180, 175, 0, 120], speed=800)
-        arm.open_gripper(open_scale=50)
-        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=800)
+        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=1200)
+        arm.set_arm_coords([x_base, y_base, 165, 175, 0, 120], speed=1200)
+        arm.open_gripper(open_scale=100)
+        arm.set_arm_coords([x_base, y_base, 300, 175, 0, 120], speed=1200)
         arm.close_gripper()
 
 
