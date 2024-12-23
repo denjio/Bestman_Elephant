@@ -39,16 +39,20 @@ def pca_function(xyz_src, xyz_dst):
     return R, t
 
 XYZInRobot = np.array([
-    [230.949, -360.680, 154.075],
-    [107.448, -360.681, 154.076],
-    [0.446, -359.432, 154.076],
-    [0.447, -260.680, 159.074],
-    [182.458, -260.675, 159.066],
-    [294.951, -260.674, 159.065],
-    [370.691, -260.684, 159.064],
-    [431.448, -224.180, 159.090],
-    [322.449, -224.181, 159.084],
-    [188.448, -224.183, 159.084]
+# [312.196, 109.287, 152.628],
+[295.908, 12.165, 158.836],
+[319.322, -108.658, 154.293],
+[348.022, -12.903, 152.749],
+[366.630, 78.324, 149.951],
+# [],
+[452.897, 86.129, 148.022],
+[441.449, 21.712, 150.553],
+[443.900, -69.781, 151.342],
+# [428.557, -159.492, 151.372],
+# [525.257, -178.740, 145.770],
+# [528.389, -109.998, 148.792],
+# [529.815, -13.628, 148.527],
+# [575.188, 64.646, 146.248]
 ])
 
 # Camera intrinsic parameters
@@ -103,7 +107,7 @@ ax.scatter(xyzInColorCamAll[:, 0], xyzInColorCamAll[:, 1], xyzInColorCamAll[:, 2
 plt.show()
 
 # Coarse registration
-Index = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+Index = np.array([0, 1, 2,3,4,5, 6])
 RCam2Robot, tCam2Robot = pca_function(xyzInColorCamAll[Index].T, XYZInRobot[Index].T)
 XYZInRobotFromCam = (RCam2Robot @ xyzInColorCamAll.T + tCam2Robot).T
 T_Cam2Robot = np.vstack([np.hstack([RCam2Robot, tCam2Robot]), np.array([0, 0, 0, 1])])

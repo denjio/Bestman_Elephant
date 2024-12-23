@@ -1,10 +1,3 @@
-""" 
-# @Author: Youbin Yao 
-# @Date: 2024-11-12 17:36:39
-# @Last Modified by:   Youbin Yao 
-# @Last Modified time: 2024-11-12 17:36:39  
-""" 
-import os
 from os.path import abspath, dirname, join
 import sys
 import math
@@ -20,8 +13,6 @@ except ImportError:
     from ompl import util as ou
     from ompl import base as ob
     from ompl import geometric as og
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(os.path.join(parent_dir, 'Motion_Planning'))
 
 def isStateValid(spaceInformation, state):
     p = state[0]
@@ -39,11 +30,10 @@ class SpaceTimeMotionValidator(ob.MotionValidator):
         return True
 
 class MotionPlanner:
-    def __init__(self, arm_count=2, vMax=0.2, solve_time=10.0):
+    def __init__(self, method='RRTstar', arm_count=2,   solve_time=10.0):
         self.arm_count = arm_count
         self.joints_per_arm = 6
         self.Dof = self.arm_count * self.joints_per_arm
-        self.vMax = vMax
         self.solve_time = solve_time
         self.space = self.setup_bounds()
         self.si = ob.SpaceInformation(self.space)
@@ -51,6 +41,7 @@ class MotionPlanner:
         self.si.setStateValidityChecker(ob.StateValidityCheckerFn(
             partial(isStateValid, self.si)
         ))
+        self.method = method
 
     def setup_bounds(self):
         lower_limits_arm = [
@@ -86,9 +77,13 @@ class MotionPlanner:
             goal[i] = float(goal_config[i])
         
         pdef.setStartAndGoalStates(start, goal)
-        
-        planner = og.RRTstar(self.si)
-        planner.setRange(self.vMax)
+        if self.method == 'RRTstar':
+            planner = og.RRTstar(self.si)
+        elif self.method == 'BITstar':
+            planner = og.BITstar(self.si)
+        elif self.method == 'RRTConnect':
+            planner = og.RRTConnect(self.si)
+        # planner.setRange(self.vMax)
         planner.setProblemDefinition(pdef)
         planner.setup()
         
@@ -144,13 +139,13 @@ def main():
 
     # 单臂规划
     print("Single-arm planning:")
-    single_arm_planner = MotionPlanner(arm_count=1, vMax=0.2, solve_time=10.0)
+    single_arm_planner = MotionPlanner(method='RRTstar',arm_count=1, vMax=0.2, solve_time=10.0)
     single_arm_actions = single_arm_planner.plan(single_arm_current, single_arm_goal)
     print("Single-arm actions:", single_arm_actions)
 
     # 双臂规划
     print("\nDual-arm planning:")
-    dual_arm_planner = MotionPlanner(arm_count=2, vMax=0.2, solve_time=10.0)
+    dual_arm_planner = MotionPlanner(method='BITstar',arm_count=2, vMax=0.2, solve_time=10.0)
     action1, action2 = dual_arm_planner.plan(dual_arm_current, dual_arm_goal)
     print("Dual-arm actions (Arm 1):", action1)
     print("Dual-arm actions (Arm 2):", action2)

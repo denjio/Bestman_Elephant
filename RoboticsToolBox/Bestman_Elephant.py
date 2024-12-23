@@ -93,6 +93,9 @@ class Bestman_Real_Elephant:
     def check_error(self):
         # 功能：机器人错误检测
         return self.robot.read_next_error()
+    
+    def wait_move_done(self):
+        self.robot.command_wait_done()
 
     def set_carte_torque_limit(self, xis_str, value):
         return self.robot.set_carte_torque_limit(xis_str, value) 
@@ -105,16 +108,22 @@ class Bestman_Real_Elephant:
     
     # def sim_get_current_end_effector_pose(self):
     #     return Pose(end_effector_info[0], end_effector_info[1])
+    
+    def _set_single_joint_value(self, joint=None, joint_value=None, speed=500):
+        self.robot.write_angle(joint, joint_value, speed=speed)
 
     def set_single_joint_value(self, joint=None, joint_value=None, speed=500):
-        self.robot.write_angle(joint, joint_value, speed=500)
+        self.robot._set_single_joint_value(joint=joint, joint_value=joint_value, speed=speed)
         self.robot.command_wait_done()
  
     # def sim_debug_set_arm_to_joint_values(self):
     #     pass
 
-    def set_arm_joint_values(self, joint_values=None, speed=500):
+    def _set_arm_joint_values(self, joint_values=None, speed=500):
         self.robot.write_angles(joint_values, speed=500)
+
+    def set_arm_joint_values(self, joint_values=None, speed=500):
+        self._set_arm_joint_values(joint_values=joint_values, speed=speed)
         self.robot.command_wait_done()
     
     def move_arm_follow_target_trajectory(self, target_trajectory,trajectory_type='euler', target_vel=None, target_acc=None, MAX_VEL=None, MAX_ACC=None):
@@ -162,7 +171,7 @@ class Bestman_Real_Elephant:
     def set_single_coord(self, axis, value, speed):
         # 功能：发送单个坐标值给机械臂进行移动
         # 参数：机器人笛卡尔位置[0代表x,1代表y,2代表z,3代表rx,4代表ry,5代表rz]，要到达的坐标值，机械臂运动的速度:[0-6000]
-        self.robot.write_coord(axis, value, speed=1000)
+        self.robot.write_coord(axis, value, speed=speed)
 
     def set_arm_coords(self,coords,speed=1000):
         # 功能：发送整体坐标和姿态,让机械臂头部从原来点移动到指定点
@@ -227,15 +236,15 @@ class Bestman_Real_Elephant:
         else:
             # gripper opening specified position
             self.robot.set_gripper_value(open_scale, speed)
-        self.robot.command_wait_done()
+        # self.robot.command_wait_done()
         print(
                 "[BestMan_Sim][Gripper] \033[34mInfo\033[0m: Gripper open!"
             )
 
     def close_gripper(self, speed=100, close_scale=None):
-        """open gripper
+        """close gripper
         Args:
-            state (int): open_scale, 0-100
+            state (int): close_scale, 0-100
             speed (int): speed, 1-100
 
         """
@@ -249,7 +258,7 @@ class Bestman_Real_Elephant:
         else:
             # gripper opening specified position
             self.robot.set_gripper_value(close_scale, speed)
-        self.robot.command_wait_done()
+        # self.robot.command_wait_done()
         print(
                 "[BestMan_Sim][Gripper] \033[34mInfo\033[0m: Gripper close!"
             )
